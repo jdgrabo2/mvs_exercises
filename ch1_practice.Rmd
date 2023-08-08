@@ -1,0 +1,389 @@
+---
+title: "Ch 1 excercises"
+author: "Julia Grabow"
+date: "2023-08-07"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+Packages used
+```{r}
+library(tidyverse)
+library(ggExtra)
+```
+Exercise 1.1:
+```{r}
+x1 <-
+  c(3, 4, 2, 6, 8, 2, 5)
+x2 <-
+  c(5, 5.5, 4, 7, 10, 5, 7.5)
+```
+
+Mean of x1 and x2:
+
+```{r}
+mean(x1)
+
+mean(x2)
+```
+
+Variances of s11 and s22 and covariance s12:
+```{r}
+var(x1)
+
+var(x2)
+
+cov(x1, x2)
+```
+
+Exercise 1.2
+```{r}
+age_yrs <-
+  c(1, 2, 3, 4, 5, 6, 7, 8, 9, 11)
+
+price_dollars <-
+  c(18.95, 19.00, 17.95, 15.54, 14.00, 12.95, 8.94, 7.49, 6.00, 3.9)
+```
+
+a) Scatterplot with dot diagram or histograms:
+```{r}
+p <-
+  ggplot() +
+  geom_point(
+    mapping = aes(
+      x = age_yrs,
+      y = price_dollars
+    )
+  )
+
+ggMarginal(
+  p,
+  type = "histogram"
+)
+```
+
+b) infer sign of sample covariance:
+As age increases, price decreases, so I expect this to have a negative covariance
+
+c)
+Sample mean of age:
+```{r}
+mean(age_yrs)
+```
+```{r}
+mean_age <- mean(age_yrs)
+```
+
+Sample mean of price_dollars:
+```{r}
+mean(price_dollars)
+```
+```{r}
+mean_price <-mean(price_dollars)
+```
+
+Sample variance of age:
+```{r}
+var(age_yrs)
+```
+```{r}
+var_age <- var(age_yrs)
+```
+
+Sample variance of price
+```{r}
+var(price_dollars)
+```
+```{r}
+var_price <- var(price_dollars)
+```
+
+Sample covariance of age and price:
+```{r}
+cov(age_yrs, price_dollars)
+```
+```{r}
+covariance_age_price <- cov(age_yrs, price_dollars)
+```
+
+Sample correlation coefficient:
+```{r}
+cor(age_yrs, price_dollars)
+```
+```{r}
+correlation_age_price <- cor(age_yrs, price_dollars)
+```
+Sample mean array (x bar):
+```{r}
+array(
+  list(
+    mean_age,
+    mean_price
+  ),
+  dim = c(
+    2, 1
+  ) 
+)
+```
+Sample variance-covariance array (Sn):
+```{r}
+array(
+  data = list(
+    var_age,
+    covariance_age_price,
+    covariance_age_price,
+    var_price
+  ),
+  dim = c(
+    2, 2
+  )
+)
+```
+Sample correlation array (R):
+```{r}
+array(
+  data = list(
+    1, correlation_age_price, correlation_age_price, 1
+  ),
+  dim = c(2, 2)
+)
+```
+
+1.3
+Values:
+```{r}
+x3.1 <-
+  c(9, 2, 6, 5, 8)
+x3.2 <-
+  c(12, 8, 6, 4, 10)
+x3.3 <-
+  c(3, 4, 0, 2, 1)
+```
+Sample mean array:
+```{r}
+array(
+  data = list(
+    mean(x3.1),
+    mean(x3.2),
+    mean(x3.3)
+  ),
+  dim = c(3, 1)
+)
+```
+Sample variances and covariances:
+```{r}
+array(
+  data = list(
+    var(x3.1),
+    cov(x3.1, x3.2),
+    cov(x3.1, x3.3),
+    cov(x3.2, x3.1),
+    var(x3.2),
+    cov(x3.2, x3.3),
+    cov(x3.3, x3.1),
+    cov(x3.3, x3.2),
+    var(x3.3)
+  ),
+  dim = c(3, 3)
+)
+```
+Sample correlation array:
+```{r}
+array(
+  data = list(
+    1, 
+    cor(x3.1, x3.2), 
+    cor(x3.1, x3.3),
+    cor(x3.2, x3.1), 
+    1, 
+    cor(x3.2, x3.3),
+    cor(x3.3, x3.1), 
+    cor(x3.3, x3.2), 
+    1
+  ),
+  dim = c(3, 3)
+)
+```
+1.4
+Create dataframe:
+```{r}
+company <-
+  c(
+    "Citigroup",
+"General Electric",
+"American Int! Group",
+"Bank of America",
+"HSBCGroup",
+"ExxonMobil",
+"Royal Dutch/Shell",
+"BP",
+"INGGroup",
+"Toyota Motor"
+)
+sales_billions <-
+  c(
+    108.28,
+152.36,
+95.04,
+65.45,
+62.97,
+263.99,
+265.19,
+285.06,
+92.01,
+165.68
+  )
+profits_billions <-
+  c(
+    17.05,
+16.59,
+10.91,
+14.14,
+9.52,
+25.33,
+18.54,
+15.73,
+8.10,
+11.13
+  )
+assets_billions <-
+  c(
+    1484.10,
+750.33,
+766.42,
+1110.46,
+1031.29,
+195.26,
+193.83,
+191.11,
+1175.16,
+211.15
+  )
+df4 <-
+  data.frame(
+    company,
+    sales_billions,
+    profits_billions,
+    assets_billions
+  )
+print(df4)
+```
+Scatterplot with marginal histograms of sales and profits:
+```{r}
+p4 <-
+  ggplot() +
+  geom_point(
+    mapping = aes(
+      x = sales_billions,
+      y = profits_billions,
+      color = company
+    )
+  )
+ggMarginal(
+  p4,
+  type = "histogram"
+)
+```
+
+b)
+Sample means:
+```{r}
+colMeans(
+  df4[
+    sapply(
+      df4, is.numeric
+    )
+  ]
+)
+```
+Variance and covariance matrix:
+```{r}
+cov(
+  df4[
+    sapply(
+      df4, is.numeric
+    )
+  ]
+)
+```
+```{r}
+
+```
+Correlation matrix:
+```{r}
+cor(
+  df4[
+    sapply(
+      df4, is.numeric
+    )
+  ]
+)
+```
+
+1.5
+Plot scatter plots and marginal histograms
+Sales and assets:
+```{r}
+p5a <-
+  ggplot() +
+  geom_point(
+    data = df4,
+    mapping = aes(
+      x = sales_billions,
+      y = assets_billions,
+      color = company
+    )
+  )
+
+ggMarginal(
+  p5a,
+  type = "histogram"
+)
+```
+Profits and Assets:
+```{r}
+p5b <-
+ggplot() +
+  geom_point(
+    data = df4,
+    mapping = aes(
+      x= profits_billions,
+      y = assets_billions,
+      color = company
+    )
+  )
+
+ggMarginal(
+  p5b,
+  type ="histogram"
+)
+```
+
+1.7
+Create dataframe for data:
+```{r}
+obs1 <- c(2, 1)
+obs2 <- c(3, 2)
+obs3 <- c(4, 4)
+
+df7 <-
+  data.frame(
+    obs1,
+    obs2,
+    obs3,
+    row.names = c(
+      "Variable 1",
+      "Variable 2"
+    )
+  )
+
+print(df7)
+```
+Plot pairs as scatterplot:
+```{r}
+pairs(df7)
+```
+
