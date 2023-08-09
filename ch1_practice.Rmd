@@ -362,28 +362,94 @@ ggMarginal(
 )
 ```
 
-1.7
-Create dataframe for data:
+1.8
+P = (-1, -1), Q = (1, 0), p = 2, a11 = 1/3, a12 = 1/9, a22 = 4/27
+Find Euclidean distance (simple pythagorean theorem):
 ```{r}
-obs1 <- c(2, 1)
-obs2 <- c(3, 2)
-obs3 <- c(4, 4)
+first <- (-1 - 1)^2
+second <- ((-1)-0)^2
+sum_of_squares <- first + second
+sqrt(sum_of_squares)
+```
+Find statistical distance:
+```{r}
+third <- (-1-1)*((-1)-0)
+a11 <- 1/3
+a22 <- 4/27
+a12 <- 1/9
+sqrt(
+  (first * a11) * (2 * a12 * third) * (second * a22)
+)
+```
 
-df7 <-
-  data.frame(
-    obs1,
-    obs2,
-    obs3,
-    row.names = c(
-      "Variable 1",
-      "Variable 2"
+1.9
+Create data frame:
+```{r}
+x1 <- c(-6, -3, -2, 1, 2, 5, 6, 8)
+x2 <- c(-2, -3, 1, -1, 2, 1, 5, 3)
+df9 <- data.frame(
+  x1,
+  x2
+)
+print(df9)
+```
+Plot scatterplot:
+```{r}
+ggplot() +
+  geom_point(
+    data = df9,
+    mapping = aes(
+      x= x1,
+      y = x2
     )
   )
-
-print(df7)
 ```
-Plot pairs as scatterplot:
+Compute s11, s22, and s12
+variance of x1:
 ```{r}
-pairs(df7)
+var(df9 $ x1)
 ```
+variance of x2:
+```{r}
+var(df9 $ x2)
+```
+Covariance of x1 and x2:
+```{r}
+cov(df9 $ x1, df9 $ x2)
+```
+Find new axes for correlated x1 and x2, which is tilde x1 and tilde x2:
+theta = 26 degrees, cos (26) = 0.899 and sin (26) = 0.438, x1 = -6, x2 = -2
+tilde x1:
+```{r}
+x1_tilde <-
+  (
+    (x1*0.899) + (x2 * 0.438)
+    )
 
+print(x1_tilde)
+```
+tilde x2:
+```{r}
+x2_tilde <-
+  (
+    (df9$x1 * 0.438) + (df9$x2 *0.889)
+  )
+
+print(x2_tilde)
+```
+Find sample variances using tilde x1 and tilde x2:
+tilde s1:
+```{r}
+s1_tilde <-
+  var(x1_tilde)
+
+print(s1_tilde)
+```
+tilde s2:
+```{r}
+s2_tilde <-
+  var(x2_tilde)
+
+print(s2_tilde)
+```
+stopped at 1.9 d
