@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE)
+knitr::opts_chunk$set(echo = TRUE)
 ```
 
 Packages used
@@ -25,18 +25,34 @@ x2 <-
 Mean of x1 and x2:
 
 ```{r}
-mean(x1)
+xbar1 <- mean(x1)
 
-mean(x2)
+xbar2 <- mean(x2)
+
+print(xbar1)
+print(xbar2)
 ```
 
 Variances of s11 and s22 and covariance s12:
+Remember, in this textbook, author uses population variance and covariance
+rather than sample variance and covariance
+s11
 ```{r}
-var(x1)
-
-var(x2)
-
-cov(x1, x2)
+(1/7) * sum(
+  ((x1-xbar1)^2)
+)
+```
+s22
+```{r}
+(1/7) * sum(
+  ((x2-xbar2)^2)
+)
+```
+s12
+```{r}
+(1/7) * sum(
+  ((x1-xbar1) * (x2-xbar2))
+)
 ```
 
 Exercise 1.2
@@ -71,18 +87,14 @@ As age increases, price decreases, so I expect this to have a negative covarianc
 c)
 Sample mean of age:
 ```{r}
-mean(age_yrs)
-```
-```{r}
 mean_age <- mean(age_yrs)
+print(mean_age)
 ```
 
 Sample mean of price_dollars:
 ```{r}
-mean(price_dollars)
-```
-```{r}
-mean_price <-mean(price_dollars)
+mean_price <- mean(price_dollars)
+print(mean_price)
 ```
 
 Sample variance of age:
@@ -437,6 +449,10 @@ x2_tilde <-
 
 print(x2_tilde)
 ```
+Are the tilde x1 and tilde x2 new axes? Or new points? Need to clarify this
+The text calls these rotated coordinates, makes me believe new points to plot
+if shifted axis is moved to fit the original axis of the plot
+
 Find sample variances using tilde x1 and tilde x2:
 tilde s1:
 ```{r}
@@ -452,4 +468,40 @@ s2_tilde <-
 
 print(s2_tilde)
 ```
-stopped at 1.9 d
+Using point (4, -2) transform in relation to shifted axes and calculate distance
+from the origin. Adjusted x value:
+```{r}
+Xadjusted <-
+   (4*0.899) + (-2 * 0.438)
+Yadjusted <-
+  (4 * 0.438) + (-2 *0.889)
+print(Xadjusted)
+```
+Adjusted y value:
+```{r}
+print(Yadjusted)
+```
+New coordinates = (2.72,-0.026); points moved right and up
+Find distance of coordinate from origin (does the origin move when axes
+are adjusted?)
+```{r}
+sqrt(
+  ((Xadjusted^2)/(s1_tilde)) +
+    ((Yadjusted^2)/(s2_tilde))
+)
+```
+I would like to practice adding an ellipse to the plot:
+```{r}
+ggplot(
+  mapping = aes(
+      x= x1_tilde,
+      y = x2_tilde
+    )
+) +
+  geom_point() +
+  stat_ellipse(
+    type = "norm"
+  )
+```
+
+
