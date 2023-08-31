@@ -1,0 +1,101 @@
+---
+title: "Abraham chapter 1 exercises"
+author: "Julia Grabow"
+date: "2023-08-31"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+Load packages:
+```{r}
+library(tidyverse)
+library(ggExtra)
+```
+Import csv's to R environment:
+```{r}
+prism_ppt_cleaned <- read_csv("~/R/sycamore_creek_bush_fire_masters/
+                              cleaned_data/csv_for_analysis/
+                              prism_ppt_cleaned.csv")
+isco_levels_cleaned <- read_csv("~/R/sycamore_creek_bush_fire_masters/
+                                cleaned_data/csv_for_analysis/
+                                isco_levels_cleaned.csv")
+bogan_water_flow_cleaned <- read_csv("~/R/sycamore_creek_bush_fire_masters/
+                                     cleaned_data/csv_for_analysis/
+                                     bogan_water_flow_cleaned.csv")
+ions_cleaned <- read_csv("~/R/sycamore_creek_bush_fire_masters/
+                         cleaned_data/
+                         csv_for_analysis/ions_cleaned.csv")
+```
+
+1.1. Consider the relationships that might occur between [DOC] and ppt and
+water levels for two sites: RC and SS
+
+Filter dataframes for sites and [DOC] and precipitation:
+```{r}
+rc_ppt <-
+  prism_ppt_cleaned %>%
+  filter(
+   Site_abbreviation == "RC",
+    Measurement_type == "Precipitation_mm"
+  )
+
+rc_doc <-
+  ions_cleaned %>%
+  filter(
+    Site_abbreviation == "RC",
+    Measurement_type == "DOC_mg/L"
+  )
+
+rc_water_level <-
+  isco_levels_cleaned %>%
+  filter(
+    Site_abbreviation == "RC"
+  )
+
+ss_ppt <-
+   prism_ppt_cleaned %>%
+  filter(
+   Site_abbreviation == "SS",
+    Measurement_type == "Precipitation_mm"
+  )
+
+ss_doc <-
+  ions_cleaned %>%
+  filter(
+    Site_abbreviation == "SS",
+    Measurement_type == "DOC_mg/L"
+  )
+
+ss_water_level <-
+  isco_levels_cleaned %>%
+  filter(
+    Site_abbreviation == "SS"
+  )
+```
+RC first: make plot of [DOC] vs stream height and [DOC] vs ppt
+```{r}
+  ggplot() +
+  geom_point(
+    data = rc_water_level,
+    mapping = aes(
+      x = Event_date_time,
+      y = Measurement
+    ),
+    size = 0.3,
+    colour = "grey",
+    alpha = 0.5
+  ) +
+  geom_point(
+    data = rc_doc,
+    mapping = aes(
+      x = Event_date_time,
+      y = Mean_measurement
+    ),
+    shape = 8
+    )
+```
+The above is not what I wanted. First I need to reduce number of measurements
+for the water levels
+
