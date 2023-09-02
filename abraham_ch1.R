@@ -7,48 +7,38 @@
 
 library(tidyverse)
 library(ggExtra)
-library(here) # Does this automatically connect to my thesis repo?
+library(here)
 
 # Read csv's for exercises ------------------------------------------------
 ## change working directory to bring in csv's from other project:
 
-setwd(
-  "/home/julia/R/sycamore_creek_bush_fire_masters"
-)
-
 prism_ppt_cleaned <- 
   read_csv(
   here(
-    "cleaned_data/csv_for_analysis/prism_ppt_cleaned.csv"
+    "prism_ppt_cleaned.csv"
   )
   )
 
 isco_levels_cleaned <-
   read_csv(
     here(
-      "cleaned_data/csv_for_analysis/isco_levels_cleaned.csv"
+      "isco_levels_cleaned.csv"
     )
   )
 
 bogan_water_flow_cleaned <- 
   read_csv(
     here(
-      "cleaned_data/csv_for_analysis/bogan_water_flow_cleaned.csv"
+      "bogan_water_flow_cleaned.csv"
     )
   )
   
 ions_cleaned <-
   read_csv(
     here(
-      "cleaned_data/csv_for_analysis/ions_cleaned.csv"
+      "ions_cleaned.csv"
     )
   )
-
-setwd(
-  "/home/julia/R/mvs_exercises"
-)
-
-getwd()
 
 ## I will reduce df each to one measurement per day, using max, mean, median,
 ## and sum/cumulative (maybe only the last for ppt)
@@ -225,7 +215,7 @@ water_levels <-
   ) %>%
   slice_head()
 
-### DF has 242 rows, as expected. Now remove unneeded rows:
+### DF has 242 rows, as expected. Now remove unneeded columns:
 
 water_levels <-
   water_levels[ ,
@@ -257,38 +247,19 @@ unique(bogan_water_flow_cleaned$Site)
 # I need make both water level and doc have same info -------------
 ## Isolate dates from doc df:
 
-doc_dates <-
-  doc$Event_date
-
-## Use vector to filter for doc dates in water_levels df:
-
-filtered_wl <-
+filtered_levels <-
   water_levels %>%
-  filter(
-    Event_date %in% dates
-  )
+  dplyr::filter(
+    paste0(
+      Event_date, "_", Site_abbreviation
+      ) %in% 
+      paste0(
+        doc$Event_date, "_", doc$Site_abbreviation
+        )
+    )
 
-## Now do the above but with sites from water_levels applied to doc:
-
-isco_sites <-
-  water_levels$Site_abbreviation
-
-filtered_doc <-
-  doc %>%
-  filter(
-    Site_abbreviation %in% isco_sites
-  )
-
-## There are still some discrepancies. Let's look at other columns----
-
-unique(filtered_doc$Event_date)
-unique(filtered_wl$Event_date)
-
-unique(filtered_doc$Site_abbreviation)
-unique(filtered_wl$Site_abbreviation)
-
-## Appears that there are only 21 dates in filtered_wl vs 26 in filtered_doc
-## I need to ask Nancy or Tamara about this and come back to later
+##Only 31 obs in filtered water_levels, but doc has 80... something seems
+##muy wrong.
 
 # Plotting the data -------------------------------------------------------
 
