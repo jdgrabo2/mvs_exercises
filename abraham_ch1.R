@@ -258,8 +258,21 @@ filtered_levels <-
         )
     )
 
-##Only 31 obs in filtered water_levels, but doc has 80... something seems
-##muy wrong.
+##Only 31 obs in filtered water_levels. What does doc have when sites that
+## aren't in iscos are removed from doc? (CC, IS, MW, RC, and SS)
+
+filtered_doc <-
+  doc %>%
+  dplyr::filter(
+    paste0(
+      Event_date, "_", Site_abbreviation
+    ) %in% 
+      paste0(
+        filtered_levels$Event_date,
+        "_",
+        filtered_levels$Site_abbreviation
+      )
+  )
 
 # Plotting the data -------------------------------------------------------
 
@@ -269,8 +282,7 @@ ggplot() +
     mapping = aes(
       x = Event_date,
       y = Measurement_max
-    ),
-    alpha = 0.75
+    )
   ) +
   geom_point(
     data = doc,
@@ -278,8 +290,7 @@ ggplot() +
       x = Event_date,
       y = Measurement_max
     ),
-    colour = "purple",
-    alpha = 0.75
+    colour = "purple"
   ) +
   facet_grid(
     vars(
@@ -295,36 +306,86 @@ ggplot() +
   xlab("Event date") +
   ylab("Maximum measurement of day")
 
+ggsave(
+  filename = "DOCvsWaterLevel.png",
+  plot = last_plot(),
+  path = here(
+    "plots/DOCvsWaterLevel.png"
+  )
+)
+
+## Plots of [DOC] vs water levels----
+
 ggplot() +
   geom_point(
-    data = water_levels,
     mapping = aes(
-      x = Event_date,
-      y = Measurement_max
-    ),
-    alpha = 0.75
-  ) +
+      x = filtered_levels$Measurement_max,
+      y = filtered_doc$Measurement_max
+    )
+  )
+
+ggplot() +
+  geom_point(
+    mapping = aes(
+      x = filtered_levels$Measurement_mean,
+      y = filtered_doc$Measurement_mean
+    )
+  )
+
+ggplot() +
+  geom_point(
+    mapping = aes(
+      x = filtered_levels$Measurement_median,
+      y = filtered_doc$Measurement_median
+    )
+  )
+
+ggplot() +
+  geom_point(
+    mapping = aes(
+      x = filtered_levels$Measurement_max,
+      y = filtered_doc$Measurement_mean
+    )
+  )
+
+ggplot() +
+  geom_point(
+    mapping = aes(
+      x = filtered_levels$Measurement_max,
+      y = filtered_doc$Measurement_median
+    )
+  )
+
+ggsave(
+  filename = "DOCmedianVsWaterMax.png",
+  plot = last_plot(),
+  path = here(
+    "plots/DOCmedianVsWaterMax.png"
+  )
+)
+
+ggplot() +
+  geom_point(
+    mapping = aes(
+      x = filtered_levels$Measurement_mean,
+      y = filtered_doc$Measurement_max
+    )
+  )
+
+## [DOC] over time regression----
+
+ggplot() +
   geom_point(
     data = doc,
     mapping = aes(
       x = Event_date,
-      y = Measurement_max
-    ),
-    colour = "purple",
-    alpha = 0.75
-  ) +
-  ggtitle(
-    aes(
-      title = "Comparison of [DOC] and water levels in Sycamore Creek"
+      y = Measurement_mean
     )
   ) +
-  xlab("Event date") +
-  ylab("Maximum measurement of day") +
   facet_wrap(
     vars(
       Site_abbreviation
-    ),
-    scales = "free_y"
+    )
   )
 
 # Playing with ppt and [DOC} ----------------------------------------------
@@ -349,19 +410,42 @@ prism_ppt_cleaned <-
     )
   )
 
-date_site <-
-  doc %>%
-  select(
-    Event_date,
-    Site_abbreviation
+filtered_ppt <-
+  prism_ppt_cleaned %>%
+  dplyr::filter(
+    paste0(
+      Event_date, "_", Site_abbreviation
+    ) %in% 
+      paste0(
+        doc$Event_date,
+        "_",
+        doc$Site_abbreviation
+      )
   )
 
-filter_ppt <-
-  prism_ppt_cleaned %>%
-  semi_join(
-    x = doc,
-    by = c(
-      "Event_date",
-      "Site_abbreviation"
+practice <-
+  filtered_ppt %>%
+  filter(
+    Measurement_type == "Precipitation_mm"
+  )
+
+filteredDOC <-
+  doc %>%
+  dplyr::filter(
+    paste0(
+      Event_date, "_", Site_abbreviation
+    ) %in% 
+      paste0(
+        practice$Event_date,
+        "_",
+        practice$Site_abbreviation
+      )
+  )
+
+ggplot() +
+  geom_point(
+    mapping = aes(
+      x = practice$Measurement,
+      y = filteredDOC$Measurement_median
     )
   )
