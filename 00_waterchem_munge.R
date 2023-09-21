@@ -317,7 +317,6 @@ chems <-
     )
 
 # Harmonize analyte names and units ---------------------------------------
-## stopped here in look through of code:
 
 chems <- 
   chems %>% # Create sampleID column, ensure it is character class (why?)
@@ -391,8 +390,8 @@ chems <-
 
 # My code attempt:
 
-practice1 <-
-chems %>% # group by diff cols; this occurs in ascending order
+chems <-
+practice1 %>% # group by diff cols; this occurs in ascending order
   slice_max(
     dilution,
     by = c(
@@ -519,7 +518,7 @@ names(
 ## Note: the low DOC standard is greater than most samples. Setting 1 mg/L as 
 ##the low.
 
-chems_corr <- # Why use replace rather than ifelse or if_else?
+chems_corr <-
   chems_wide %>% 
   mutate(
     DOC_mgL = replace(
@@ -636,10 +635,32 @@ chems_long <-
     )
   ) 
 
-## stopped here  
-chems_corr <- chems_corr %>% select(-c(NH4_mgNL, Chloride_mgL, NO3_mgNL))
+## Remove ammonium, chloride, and nitrate...? ?Porque?
+
+chems_corr <- 
+  chems_corr %>% 
+  select(
+    -c(
+      NH4_mgNL, 
+      Chloride_mgL, 
+      NO3_mgNL
+      )
+    )
   
-write.csv(chems_corr, here("data", "chems_from_ASU_clean_230617.csv"), row.names = FALSE)
+write.csv(
+  chems_corr, 
+  here(
+    "chems_from_ASU_clean_230617.csv"
+    ), 
+  row.names = FALSE
+  )
+
+write.csv(
+  chems_long,
+  here(
+    "chems_cleaned.csv"
+  )
+)
 
 ### Anions ###
 #2022
