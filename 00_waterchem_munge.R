@@ -42,7 +42,13 @@ chem_drive <-
 
 # Create file with walk function
 
-walk(chem_drive$id, ~ drive_download(as_id(.x), overwrite = TRUE))
+walk(
+  chem_drive$id, 
+  ~ drive_download(
+    as_id(.x),
+    overwrite = TRUE
+    )
+  )
 
 # Read in file ------------------------------------------------------------
 ## Skip the following code chunk and go to revised chunk
@@ -391,7 +397,7 @@ chems <-
 # My code attempt:
 
 chems <-
-practice1 %>% # group by diff cols; this occurs in ascending order
+chems %>% # group by diff cols; this occurs in ascending order
   slice_max(
     dilution,
     by = c(
@@ -400,30 +406,6 @@ practice1 %>% # group by diff cols; this occurs in ascending order
     DateTime, 
     Type, 
     SampleID
-    ),
-    n = 1
-  )
-
-## Difference between chems and updated df?
-
-diff_df <-
-  setdiff(
-    chems,
-    practice1
-  )
-
-## Looks correct, as does TKH script from above. Now apply to actual chems df:
-
-chems <-
-chems %>%
-  slice_max(
-    dilution,
-    by = c(
-      Analyte, 
-      Site, 
-      DateTime, 
-      Type, 
-      SampleID
     ),
     n = 1
   )
@@ -574,66 +556,78 @@ chems_corr <-
       0.00085
       )
     ) 
+
 ## Do the above for the long format chems_mn
 
 chems_long <-
   chems_mn %>%
   mutate(
-    Analyte = ifelse(
-      "DOC" < 1, 
+    final_conc = ifelse(
+      Analyte == "DOC" & final_conc < 1, 
       0.144,
-      "DOC"
-    )
-  ) %>%
-  mutate(
-    Analyte = ifelse(
-      "NH4" < 0.01, 
-      0.003,
-      "NH4"
+      final_conc
     )
   ) %>% 
   mutate(
-    Analyte = ifelse(
-      "SRP" < 0.005, 
+    final_conc = ifelse(
+      Analyte == "NH4" & final_conc < 0.01, 
+      0.003,
+      final_conc
+    )
+  ) %>% 
+  mutate(
+    final_conc = ifelse(
+      Analyte == "SRP" & final_conc < 0.005, 
       0.000139,
-      "SRP"
+      final_conc
     )
   ) %>%
   mutate(
-    Analyte = ifelse(
-      "TC" < 12.5, 
+    final_conc = ifelse(
+      Analyte == "TC" & final_conc < 12.5, 
       0.375,
-      "TC"
+      final_conc
       )
     ) %>%
   mutate(
-    Analyte = ifelse(
-      "TDP" < 0.1, 
+    final_conc = ifelse(
+      Analyte == "TDP" & final_conc < 0.1, 
       0.00465,
-      "TDP"
+      final_conc
     )
   ) %>%
   mutate(
-    Analyte = ifelse(
-      "TN" < 0.5, 
+    final_conc = ifelse(
+      Analyte == "TN" & final_conc < 0.5, 
       0.004,
-      "TN"
+      final_conc
     )
   ) %>%
   mutate(
-    Analyte = ifelse(
-      "Chloride" < 2.5, 
+    final_conc = ifelse(
+      Analyte == "Chloride" & final_conc < 2.5, 
       0.19,
-      "Chloride"
+      final_conc
     )
   ) %>%
   mutate(
-    Analyte = ifelse(
-      "NO3" < 0.005, 
+    final_conc = ifelse(
+      Analyte == "NO3" & final_conc < 0.005, 
       0.00085,
-      "NO3"
+      final_conc
     )
   ) 
+
+## Join analyte column with concentration unit column
+
+chems_long <-
+  chems_long %>%
+  unite(
+    col = "Analyte",
+    4:5,
+    sep = "_",
+    remove = TRUE
+  )
 
 ## Remove ammonium, chloride, and nitrate...? ?Porque?
 
@@ -646,6 +640,16 @@ chems_corr <-
       NO3_mgNL
       )
     )
+
+## Remove the above for my long format df:
+
+chems_long <-
+  chems_long %>%
+  filter(
+      Analyte != "NH4_mgNL" &
+      Analyte != "Chloride_mgL" &
+      Analyte != "NO3_mgNL"
+  )
   
 write.csv(
   chems_corr, 
